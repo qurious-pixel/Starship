@@ -135,7 +135,7 @@ jobs:
           #(cd build-cmake && cpack -G External)
       - name: Package AppImage
         run: |
-          mkdir AppDir/usr/bin/include
+          mkdir -p AppDir/usr/bin/include
           cp build-cmake/Starship AppDir/usr/bin/
           cp build-cmake/torch/src/torch-build/torch AppDir/usr/bin/
           cp {Starship.desktop,logo.png} AppDir
