@@ -132,10 +132,21 @@ jobs:
         run: |
           cmake -H. -Bbuild-cmake -GNinja -DCMAKE_BUILD_TYPE=Release
           cmake --build build-cmake --config Release -j3
-          (cd build-cmake && cpack -G External)
-
+          #(cd build-cmake && cpack -G External)
+      - name: Package AppImage
+        run: |
+          mkdir AppDir/usr/bin/include
+          cp build-cmake/Starship AppDir/usr/bin/
+          cp build-cmake/torch/src/torch-build/torch AppDir/usr/bin/
+          cp {Starship.desktop,logo.png} AppDir
+          cp -r {assets,config.yml} AppDir/usr/bin/
+          cp -r include/{bgm.h,sf64object.h,sf64level.h,sf64mesg.h,sf64audio_external.h,sf64event.h,sf64player.h} AppDir/usr/bin/include/
+          chmod +x AppDir/usr/bin/{Starship,Starship.sh,torch}
+          curl -sSfLO "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
+          chmod a+x linuxdeploy-x86_64.AppImage
+          ./linuxdeploy-x86_64.AppImage --appdir=AppDir -d AppDir/Starship.desktop -i AppDir/logo.png --output appimage
           mv README.md readme.txt
-          mv build-cmake/*.appimage starship.appimage
+          mv *.appimage starship.appimage
       - name: Upload build
         uses: actions/upload-artifact@v4
         with:
